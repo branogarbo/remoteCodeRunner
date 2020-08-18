@@ -1,0 +1,39 @@
+<html>
+   <head>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js"></script>
+   </head>
+   <body>
+
+      <textarea id="codeArea" cols="30" rows="10">package main
+
+      import "fmt"
+
+      func main() {
+         fmt.Println("this a demo")
+      }</textarea>
+      <button onclick="runCode()">Run Code</button>
+      <div>Result:<div id="codeResult"></div></div>
+      
+      <script>
+         let socket = io();
+         
+         socket.on('connect', socket => {
+            console.log('connected to server');
+         })
+
+         socket.on('result', result => {
+            document.querySelector('#codeResult').innerHTML = result;
+
+            console.log(result);
+         })
+
+         ///////////////////////////
+
+         function runCode() {
+            socket.emit('code', document.querySelector('#codeArea').value);
+
+            console.log('sending code to server');
+         }
+      </script>
+   </body>
+</html>
