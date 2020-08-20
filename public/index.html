@@ -4,35 +4,35 @@
    </head>
    <body>
 
-      <textarea id="codeArea" cols="30" rows="10">package main
-
-      import "fmt"
-
-      func main() {
-         fmt.Println("this a demo")
-      }</textarea>
+      <input type="text">
       <button onclick="runCode()">Run Code</button>
-      <div>Result:<div id="codeResult"></div></div>
+      <div id="output"></div>
       
       <script>
          let socket = io();
          
          socket.on('connect', socket => {
-            console.log('connected to server');
-         })
+            console.log('%c** connected to server **', 'color:blue; font-weight:bold');
+         });
 
-         socket.on('result', result => {
-            document.querySelector('#codeResult').innerHTML = result;
+         socket.on('data', data => {
+            console.log(data);
+            console.log(`%c** finished executing **`, 'color:green; font-weight:bold');
+         });
 
-            console.log(result);
-         })
+         socket.on('error', error => {
+            console.log(`%c${error}`, 'color:red; font-weight:bold');
+            console.log(`%c** finished executing **`, 'color:green; font-weight:bold');
+         });
 
-         ///////////////////////////
+         /////////////////////////////////////////
+
+         document.querySelector('input').onkeydown = event => event.key == "Enter" ? runCode() : {};
 
          function runCode() {
-            socket.emit('code', document.querySelector('#codeArea').value);
+            socket.emit('command', document.querySelector('input').value);
 
-            console.log('sending code to server');
+            console.log('%c** sending command to server **', 'color:blue; font-weight:bold');
          }
       </script>
    </body>

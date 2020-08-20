@@ -1,9 +1,7 @@
 let express = require('express');
 let socket = require('socket.io');
 let path = require('path');
-
-let exec = require('child_process').exec;
-let fs = require('fs');
+let { exec } = require('child_process');
 
 let app = express();
 let port = 3000;
@@ -16,21 +14,11 @@ let io = socket(server);
 io.on('connection', socket => {
    console.log('connected to client');
 
-   socket.on('code', code => {
-      let result = "";
+   socket.on('command', command => {
+      exec(command, (error, stdout, stderr) => {
+         // weird error behavior
 
-      fs.writeFileSync('./exec/main.go', code);
-
-      let child = exec('go run ./exec/main.go');
-
-      child.stdout.on('data', data => {
-         result += data;
-
-         socket.emit('result', result);
-      })
-      child.on('close', ()=>{
-         console.log('finished executing');
-      })
-
-   })
-})
+         socket.emit('data', stdout);
+      });
+   });
+});
