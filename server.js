@@ -18,19 +18,20 @@ io.on('connection', socket => {
 
    socket.on('code', code => {
       let result = "";
+      let goPath = "./exec/go/main.go";
 
-      fs.writeFileSync('./exec/main.go', code);
+      fs.writeFileSync(goPath, code);
 
-      let child = exec('go run ./exec/main.go');
+      let child = exec(`go run ${goPath}`);
 
       child.stdout.on('data', data => {
          result += data;
 
          socket.emit('result', result);
       })
+
       child.on('close', ()=>{
          console.log('finished executing');
       })
-
    })
 })
